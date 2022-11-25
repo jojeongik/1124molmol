@@ -61,17 +61,17 @@ public class PlayerMoving : MonoBehaviour
     void Update()
     {
         // 서클 선택
-        if (Input.GetKey(KeyCode.Z)){
+        if (Input.GetKeyDown(KeyCode.Z)){
             Circle[0].SetActive(true);
             Circle[1].SetActive(false);
             Circle[2].SetActive(false);
         }
-        if (Input.GetKey(KeyCode.X)){
-            Circle[0].SetActive(false);
+        if (Input.GetKeyDown(KeyCode.X)){            
+           Circle[0].SetActive(false);
             Circle[1].SetActive(true);
             Circle[2].SetActive(false);
         }
-        if (Input.GetKey(KeyCode.C)){
+        if (Input.GetKeyDown(KeyCode.C)){
             Circle[0].SetActive(false);
             Circle[1].SetActive(false);
             Circle[2].SetActive(true);

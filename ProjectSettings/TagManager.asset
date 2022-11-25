@@ -18,6 +18,8 @@ TagManager:
   - EnemyBomb
   - JumpBox
   - LeftExcelZone
+  - Circle
+  - HitBox
   layers:
   - Default
   - TransparentFX
@@ -30,7 +32,7 @@ TagManager:
   - normalfloor
   - blockedfloor
   - 
-  - 
+  - HitBox
   - PlayerDamaged
   - Bullet
   - TraceBullet

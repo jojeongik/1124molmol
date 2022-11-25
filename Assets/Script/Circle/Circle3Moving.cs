@@ -13,7 +13,12 @@ public class Circle3Moving : MonoBehaviour
     public Transform player;
     public GameManger gameManger;
     public Transform[] Circle; //회전 서클
-    public int rotdir; //회전 방향
+    public float rotdir; //회전 방향
+    float doubleclickedtime = -1.0f;
+    float doubleclickedtime2 = -1.0f;
+    float interval = 0.25f;
+    bool IsDoubleClicked = false;
+    bool IsDoubleClicked2 = false;
     
     
     float PPX; //player position x
@@ -27,22 +32,64 @@ public class Circle3Moving : MonoBehaviour
     void Update() {
         // 카이팅
         if (Input.GetKey(KeyCode.W)){
-            Radius = Mathf.Lerp(Radius,8,Time.deltaTime*10);
+            Radius = Mathf.Lerp(Radius,6,Time.deltaTime*10);
+            rotdir = Mathf.Lerp(rotdir,Mathf.Sign(rotdir) * 2.0f,Time.deltaTime*10);
+            //PlayerMoving.TotalPlayerDamage = Mathf.Lerp(PlayerMoving.TotalPlayerDamage,0,Time.deltaTime*10);
+            //Debug.Log(PlayerMoving.TotalPlayerDamage);
         }
-        else if(!Input.GetKey(KeyCode.W) && Radius >5){
-            Radius = Mathf.Lerp(Radius,5,Time.deltaTime*10);
+        else if(!Input.GetKey(KeyCode.W) && Radius > 2.999f || PlayerMoving.TotalPlayerDamage < 0.999f){
+            Radius = Mathf.Lerp(Radius,3,Time.deltaTime*10);
+            rotdir = Mathf.Lerp(rotdir,Mathf.Sign(rotdir) * 1f,Time.deltaTime*10);
+            //PlayerMoving.TotalPlayerDamage = Mathf.Lerp(PlayerMoving.TotalPlayerDamage,3,Time.deltaTime*10);
+            //Debug.Log(PlayerMoving.TotalPlayerDamage);
         } 
         if (Input.GetKey(KeyCode.S)){
             Radius = Mathf.Lerp(Radius,1,Time.deltaTime*10);
+            rotdir = Mathf.Lerp(rotdir,Mathf.Sign(rotdir) * 0.5f,Time.deltaTime*10);
         }
-        else if(!Input.GetKey(KeyCode.S) && Radius <5){
-            Radius = Mathf.Lerp(Radius,5,Time.deltaTime*10);
-        } 
+        else if(!Input.GetKey(KeyCode.S) && Radius <3){
+            Radius = Mathf.Lerp(Radius,3,Time.deltaTime*10);
+            rotdir = Mathf.Lerp(rotdir,Mathf.Sign(rotdir) * 1.0f,Time.deltaTime*10);
+        }
         if (Input.GetKeyDown(KeyCode.D)){
             rotdir = -1;
+            if((Time.time-doubleclickedtime) < interval)
+            {
+                IsDoubleClicked = true;
+                doubleclickedtime = -1.0f;
+                Debug.Log(IsDoubleClicked);
+            }
+            else{
+                IsDoubleClicked =false;
+                doubleclickedtime = Time.time;
+                Debug.Log(IsDoubleClicked);
+            }
+        }
+        if (Input.GetKey(KeyCode.D) && IsDoubleClicked){
+            rotdir = -10;
+        }
+        if(Input.GetKeyUp(KeyCode.D)){
+            IsDoubleClicked = false;
         }
         if (Input.GetKeyDown(KeyCode.A)){
             rotdir = 1;
+            if((Time.time-doubleclickedtime2) < interval)
+            {
+                IsDoubleClicked2 = true;
+                doubleclickedtime2 = -1.0f;
+                Debug.Log(IsDoubleClicked);
+            }
+            else{
+                IsDoubleClicked2 =false;
+                doubleclickedtime2 = Time.time;
+                Debug.Log(IsDoubleClicked);
+            }
+        }
+        if (Input.GetKey(KeyCode.A) && IsDoubleClicked2){
+            rotdir = 10;
+        }
+        if(Input.GetKeyUp(KeyCode.A)){
+            IsDoubleClicked2 = false;
         }
         // 캐릭터 추적
         rigid.position = player.position;

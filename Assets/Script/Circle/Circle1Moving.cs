@@ -7,8 +7,7 @@ public class Circle1Moving : MonoBehaviour
 
     Rigidbody2D rigid;
     float Angle; // 회전 각
-    
-    public float FollowSpeed; // 플레이어 추적 속도
+    public float AngleSpeed;
     public float Radius; // 회전 반경
     
 
@@ -16,11 +15,16 @@ public class Circle1Moving : MonoBehaviour
     public GameManger gameManger;
     public Transform[] Circle; //회전 서클
 
-    public int rotdir; //회전 방향
+    public float rotdir; //회전 방향
     
     
     float PPX; //player position x
     float PPY; //player position y
+    float doubleclickedtime = -1.0f;
+    float doubleclickedtime2 = -1.0f;
+    float interval = 0.25f;
+    bool IsDoubleClicked = false;
+    bool IsDoubleClicked2 = false;
 
     // Start is called before the first frame update
     void Start()
@@ -43,21 +47,63 @@ public class Circle1Moving : MonoBehaviour
         // 카이팅
         if (Input.GetKey(KeyCode.W)){
             Radius = Mathf.Lerp(Radius,6,Time.deltaTime*10);
+            rotdir = Mathf.Lerp(rotdir,Mathf.Sign(rotdir) * 2.0f,Time.deltaTime*10);
+            //PlayerMoving.TotalPlayerDamage = Mathf.Lerp(PlayerMoving.TotalPlayerDamage,0,Time.deltaTime*10);
+            //Debug.Log(PlayerMoving.TotalPlayerDamage);
         }
-        else if(!Input.GetKey(KeyCode.W) && Radius >3){
+        else if(!Input.GetKey(KeyCode.W) && Radius > 2.999f || PlayerMoving.TotalPlayerDamage < 0.999f){
             Radius = Mathf.Lerp(Radius,3,Time.deltaTime*10);
+            rotdir = Mathf.Lerp(rotdir,Mathf.Sign(rotdir) * 1f,Time.deltaTime*10);
+            //PlayerMoving.TotalPlayerDamage = Mathf.Lerp(PlayerMoving.TotalPlayerDamage,3,Time.deltaTime*10);
+            //Debug.Log(PlayerMoving.TotalPlayerDamage);
         } 
         if (Input.GetKey(KeyCode.S)){
             Radius = Mathf.Lerp(Radius,1,Time.deltaTime*10);
+            rotdir = Mathf.Lerp(rotdir,Mathf.Sign(rotdir) * 0.5f,Time.deltaTime*10);
         }
         else if(!Input.GetKey(KeyCode.S) && Radius <3){
             Radius = Mathf.Lerp(Radius,3,Time.deltaTime*10);
-        } 
+            rotdir = Mathf.Lerp(rotdir,Mathf.Sign(rotdir) * 1.0f,Time.deltaTime*10);
+        }
         if (Input.GetKeyDown(KeyCode.D)){
             rotdir = -1;
+            if((Time.time-doubleclickedtime) < interval)
+            {
+                IsDoubleClicked = true;
+                doubleclickedtime = -1.0f;
+                Debug.Log(IsDoubleClicked);
+            }
+            else{
+                IsDoubleClicked =false;
+                doubleclickedtime = Time.time;
+                Debug.Log(IsDoubleClicked);
+            }
+        }
+        if (Input.GetKey(KeyCode.D) && IsDoubleClicked){
+            rotdir = -10;
+        }
+        if(Input.GetKeyUp(KeyCode.D)){
+            IsDoubleClicked = false;
         }
         if (Input.GetKeyDown(KeyCode.A)){
             rotdir = 1;
+            if((Time.time-doubleclickedtime2) < interval)
+            {
+                IsDoubleClicked2 = true;
+                doubleclickedtime2 = -1.0f;
+                Debug.Log(IsDoubleClicked);
+            }
+            else{
+                IsDoubleClicked2 =false;
+                doubleclickedtime2 = Time.time;
+                Debug.Log(IsDoubleClicked);
+            }
+        }
+        if (Input.GetKey(KeyCode.A) && IsDoubleClicked2){
+            rotdir = 10;
+        }
+        if(Input.GetKeyUp(KeyCode.A)){
+            IsDoubleClicked2 = false;
         }
 
 
