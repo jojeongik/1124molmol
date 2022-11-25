@@ -26,16 +26,20 @@ public class PlayerMoving : MonoBehaviour
     public GameObject[] Circle;
     public Slider hpSlider;  //hp 슬라이더UI
     public Slider expSlider; //exp 슬라이더UI
+    public Slider EnergySlider; // attack Energy 슬라이더UI
     public GameObject hudDamageText; //데미지 텍스트
     public GameObject LevelUpText; // 레벨업 텍스트
     public Transform hudPos; //데미지 텍스트 위치
     public float CurrentExp; //현재 exp
     public float[] NeedExp;  //레벨업할때 필요한 경험치
     public float CurrentHp;
+    public static float CurrentEnergy;
+    public static float EnergySpeed;
     float EnemyDamage;  //적 데미지
     public static float Size = 1;// 서클 사이즈
     public static float AngleSpeed = 1; // 회전 속도
     public static float SkillDamage;
+    
  
 
 
@@ -192,12 +196,15 @@ public class PlayerMoving : MonoBehaviour
             }
         }
 
-        //hp, exp 슬라이더관련 조정
+        //hp, exp, energy 슬라이더관련 조정
         hpSlider.maxValue = PlayerHp;
         //hpSlider.value = CurrentHp;
         hpSlider.value = Mathf.Lerp(hpSlider.value,CurrentHp,Time.deltaTime*10); //선형보간 함수로 체력이 부드럽게 깎임
         expSlider.maxValue = NeedExp[PlayerLevel-1];
         expSlider.value = CurrentExp;
+        EnergySlider.maxValue = 100f;
+        EnergySlider.value = CurrentEnergy; // FixedUpdate에서 Energy 채우는 스크립트 한 줄
+        CurrentEnergy += 1;
 
         // 레벨업시
         if (CurrentExp >= NeedExp[PlayerLevel-1])
