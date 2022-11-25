@@ -82,6 +82,7 @@ public class EnemyMove : DamageController
                 Invoke("DropItem", 1.2f);
                 StopMove();
                 player.CurrentExp += EnemyExp;
+                player.CircleEnergy += EnemyExp;
                 Invoke("Revive", 10);
             }
             else

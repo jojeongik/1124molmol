@@ -1,56 +1,99 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Circle2Moving : MonoBehaviour
 {
 
     Rigidbody2D rigid;
     float Angle; // 회전 각
-    public float FollowSpeed; // 플레이어 추적 속도
+    public float AngleSpeed;
     public float Radius; // 회전 반경
+    public float EnergyFillSpeed;
+    public float EnergyDrainSpeed;
+    public PlayerMoving Player;
+    
+    
 
     public Transform player;
     public GameManger gameManger;
     public Transform[] Circle; //회전 서클
+
     public float rotdir; //회전 방향
+    
+    
+    float PPX; //player position x
+    float PPY; //player position y
     float doubleclickedtime = -1.0f;
     float doubleclickedtime2 = -1.0f;
     float interval = 0.25f;
     bool IsDoubleClicked = false;
     bool IsDoubleClicked2 = false;
-    
-    
-    float PPX; //player position x
-    float PPY; //player position y
+    bool stop;
+    bool CircleEnergyCheck1;
+    bool CircleEnergyCheck2;
+
 
     // Start is called before the first frame update
     void Start()
     {
         rigid = GetComponent<Rigidbody2D>();
+        stop = false;
+        CircleEnergyCheck1 = false;
+        CircleEnergyCheck2 = false;
     }
+
+    // Update is called once per frame
+
     void Update() {
-        // 카이팅
-        if (Input.GetKey(KeyCode.W)){
-            Radius = Mathf.Lerp(Radius,6,Time.deltaTime*10);
-            rotdir = Mathf.Lerp(rotdir,Mathf.Sign(rotdir) * 2.0f,Time.deltaTime*10);
-            //PlayerMoving.TotalPlayerDamage = Mathf.Lerp(PlayerMoving.TotalPlayerDamage,0,Time.deltaTime*10);
-            //Debug.Log(PlayerMoving.TotalPlayerDamage);
+        //에너지 충전
+        if (PlayerMoving.CurrentEnergy <100.1f){
+            PlayerMoving.CurrentEnergy += Time.deltaTime * EnergyFillSpeed;;
         }
-        else if(!Input.GetKey(KeyCode.W) && Radius > 2.999f || PlayerMoving.TotalPlayerDamage < 0.999f){
+        // if (Input.GetKey(KeyCode.LeftControl)){
+        //     PlayerMoving.AngleSpeed = Mathf.Lerp(PlayerMoving.AngleSpeed,10,Time.deltaTime*10);
+        // }
+        // else if(!Input.GetKeyUp(KeyCode.LeftControl) && Radius >3){
+        //     Radius = Mathf.Lerp(Radius,3,Time.deltaTime*10);
+        // }
+
+
+        // 카이팅
+        if (Input.GetKey(KeyCode.W) && PlayerMoving.CurrentEnergy > 0 && !stop){
+            Radius = Mathf.Lerp(Radius,6,Time.deltaTime*10);
+            rotdir = Mathf.Lerp(rotdir,Mathf.Sign(rotdir) * 5.0f,Time.deltaTime*10); // 서클 속도 증가
+            // PlayerMoving.AngleSpeed = Mathf.Lerp(PlayerMoving.AngleSpeed,PlayerMoving.AngleSpeed-3,Time.deltaTime*10);
+            PlayerMoving.CurrentEnergy -= Time.deltaTime * EnergyDrainSpeed; //에너지 소모
+            PlayerMoving.Size = Mathf.Lerp(PlayerMoving.Size,3,Time.deltaTime*10); //서클 크기 증가
+            if (PlayerMoving.CurrentEnergy <0.01f){
+                stop = true;
+            }
+        }
+        if (Input.GetKeyUp(KeyCode.W)){
+            stop = false;
+        }
+        else if(!Input.GetKey(KeyCode.W) && Radius >4 || PlayerMoving.Size >1.0001f || stop){
             Radius = Mathf.Lerp(Radius,3,Time.deltaTime*10);
             rotdir = Mathf.Lerp(rotdir,Mathf.Sign(rotdir) * 1f,Time.deltaTime*10);
-            //PlayerMoving.TotalPlayerDamage = Mathf.Lerp(PlayerMoving.TotalPlayerDamage,3,Time.deltaTime*10);
-            //Debug.Log(PlayerMoving.TotalPlayerDamage);
+            PlayerMoving.Size = Mathf.Lerp(PlayerMoving.Size,1f,Time.deltaTime*10);
+            if (Radius < 3.1f){
+                //stop = false;
+            }
+            // PlayerMoving.AngleSpeed = Mathf.Lerp(PlayerMoving.AngleSpeed,PlayerMoving.AngleSpeed+3,Time.deltaTime*10);
         } 
-        if (Input.GetKey(KeyCode.S)){
-            Radius = Mathf.Lerp(Radius,1,Time.deltaTime*10);
-            rotdir = Mathf.Lerp(rotdir,Mathf.Sign(rotdir) * 0.5f,Time.deltaTime*10);
-        }
+        // if (Input.GetKey(KeyCode.S)){
+        //     Radius = Mathf.Lerp(Radius,1,Time.deltaTime*10);
+        //     rotdir = Mathf.Lerp(rotdir,Mathf.Sign(rotdir) * 0.5f,Time.deltaTime*10);
+        //     PlayerMoving.Damagefix = Mathf.Lerp(PlayerMoving.Damagefix,0,Time.deltaTime*10);
+            
+        // }
         else if(!Input.GetKey(KeyCode.S) && Radius <3){
             Radius = Mathf.Lerp(Radius,3,Time.deltaTime*10);
             rotdir = Mathf.Lerp(rotdir,Mathf.Sign(rotdir) * 1.0f,Time.deltaTime*10);
+            PlayerMoving.Damagefix = Mathf.Lerp(PlayerMoving.Damagefix,1,Time.deltaTime*10);
         }
+        //서클 방향 변경
         if (Input.GetKeyDown(KeyCode.D)){
             rotdir = -1;
             if((Time.time-doubleclickedtime) < interval)
@@ -65,31 +108,52 @@ public class Circle2Moving : MonoBehaviour
                 Debug.Log(IsDoubleClicked);
             }
         }
-        if (Input.GetKey(KeyCode.D) && IsDoubleClicked){
-            rotdir = -10;
+        // 서클 속도 증가 스킬
+        if (IsDoubleClicked && Player.CircleEnergy >= 50 || CircleEnergyCheck1){
+            if (Player.CircleEnergy > 0.3f){
+                Player.CircleEnergy -= Time.deltaTime*30;
+                rotdir = -10;
+                CircleEnergyCheck1 = true;
+            }
+            else if (Player.CircleEnergy <= 0.3f){
+                CircleEnergyCheck1 = false;
+                rotdir = -1;
+            }
         }
         if(Input.GetKeyUp(KeyCode.D)){
             IsDoubleClicked = false;
+            rotdir = -1;
         }
+        //서클 방향 변경
         if (Input.GetKeyDown(KeyCode.A)){
             rotdir = 1;
             if((Time.time-doubleclickedtime2) < interval)
             {
                 IsDoubleClicked2 = true;
                 doubleclickedtime2 = -1.0f;
-                Debug.Log(IsDoubleClicked);
+                Debug.Log(IsDoubleClicked2);
             }
             else{
                 IsDoubleClicked2 =false;
                 doubleclickedtime2 = Time.time;
-                Debug.Log(IsDoubleClicked);
+                Debug.Log(IsDoubleClicked2);
             }
         }
-        if (Input.GetKey(KeyCode.A) && IsDoubleClicked2){
-            rotdir = 10;
+        //서클 속도 증가 스킬
+        if (IsDoubleClicked2 && Player.CircleEnergy >= 50 || CircleEnergyCheck2){
+            if (Player.CircleEnergy > 0.3f){
+                Player.CircleEnergy -= Time.deltaTime*30;
+                rotdir = 10;
+                CircleEnergyCheck2 = true;
+            }
+            else if (Player.CircleEnergy <= 0.3f){
+                CircleEnergyCheck2 = false;
+                rotdir = 1;
+            }
         }
         if(Input.GetKeyUp(KeyCode.A)){
             IsDoubleClicked2 = false;
+            rotdir = 1;
         }
 
         // 캐릭터 추적

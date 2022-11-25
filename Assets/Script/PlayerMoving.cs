@@ -17,6 +17,7 @@ public class PlayerMoving : DamageController
     public float JumpPower; // 점프력
     public float PlayerAtkDmg; // 플레이어 공격력
     public static float TotalPlayerDamage;   // 플레이어 최종공격력
+    public static float Damagefix;
     public float PlayerHp; // 플레이어 체력
     public int PlayerLevel; // 플레이어 레벨
     float h; //Horizontal 방향
@@ -27,6 +28,7 @@ public class PlayerMoving : DamageController
     public Slider hpSlider;  //hp 슬라이더UI
     public Slider expSlider; //exp 슬라이더UI
     public Slider EnergySlider; // attack Energy 슬라이더UI
+    public Slider CircleSlider; // circle skill 슬라이더
     public GameObject hudDamageText; //데미지 텍스트
     public GameObject healingText; //힐링 텍스트
     public GameObject LevelUpText; // 레벨업 텍스트
@@ -35,7 +37,7 @@ public class PlayerMoving : DamageController
     public float[] NeedExp;  //레벨업할때 필요한 경험치
     public float CurrentHp;
     public static float CurrentEnergy;
-    public static float EnergySpeed;
+    public float CircleEnergy;
     float EnemyDamage;  //적 데미지
     public static float Size = 1;// 서클 사이즈
     public static float AngleSpeed = 1; // 회전 속도
@@ -205,9 +207,15 @@ public class PlayerMoving : DamageController
         hpSlider.value = Mathf.Lerp(hpSlider.value, CurrentHp, Time.deltaTime * 10); //선형보간 함수로 체력이 부드럽게 깎임
         expSlider.maxValue = NeedExp[PlayerLevel - 1];
         expSlider.value = CurrentExp;
-        //EnergySlider.maxValue = 100f;
-        //EnergySlider.value = CurrentEnergy; // FixedUpdate에서 Energy 채우는 스크립트 한 줄
-        //CurrentEnergy += 1;
+        CircleSlider.maxValue = 50;
+        if (CircleEnergy >50 ){
+            CircleSlider.value = 50;
+        }
+        else {
+            CircleSlider.value = CircleEnergy;
+        }
+        EnergySlider.maxValue = 100f;
+        EnergySlider.value = CurrentEnergy; // FixedUpdate에서 Energy 채우는 스크립트 한 줄
 
         // 레벨업시
         if (CurrentExp >= NeedExp[PlayerLevel - 1])
