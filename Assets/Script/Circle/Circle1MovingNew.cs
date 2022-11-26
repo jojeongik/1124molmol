@@ -21,6 +21,11 @@ public class Circle1MovingNew : MonoBehaviour
     public Transform[] Circle; //회전 서클
 
     public float rotdir; //회전 방향
+    public float WRadius;
+    public float WSpeed;
+    public float WSize;
+    public float CSSpeed;
+    public float CEDS; //Circle Energy Drain Speed;
     
     
     float PPX; //player position x
@@ -61,11 +66,11 @@ public class Circle1MovingNew : MonoBehaviour
 
         // 카이팅
         if (Input.GetKey(KeyCode.W) && PlayerMoving.CurrentEnergy > 0 && !stop){
-            Radius = Mathf.Lerp(Radius,6,Time.deltaTime*10);
-            rotdir = Mathf.Lerp(rotdir,Mathf.Sign(rotdir) * 5.0f,Time.deltaTime*10); // 서클 속도 증가
+            Radius = Mathf.Lerp(Radius,WRadius,Time.deltaTime*10);
+            rotdir = Mathf.Lerp(rotdir,Mathf.Sign(rotdir) * WSpeed,Time.deltaTime*10); // 서클 속도 증가
             // PlayerMoving.AngleSpeed = Mathf.Lerp(PlayerMoving.AngleSpeed,PlayerMoving.AngleSpeed-3,Time.deltaTime*10);
             PlayerMoving.CurrentEnergy -= Time.deltaTime * EnergyDrainSpeed; //에너지 소모
-            PlayerMoving.Size = Mathf.Lerp(PlayerMoving.Size,3,Time.deltaTime*10); //서클 크기 증가
+            PlayerMoving.Size = Mathf.Lerp(PlayerMoving.Size,WSize,Time.deltaTime*10); //서클 크기 증가
             if (PlayerMoving.CurrentEnergy <0.01f){
                 stop = true;
             }
@@ -73,7 +78,7 @@ public class Circle1MovingNew : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.W)){
             stop = false;
         }
-        else if(!Input.GetKey(KeyCode.W) && Radius >4 || PlayerMoving.Size >1.0001f || stop){
+        else if(!Input.GetKey(KeyCode.W) && Radius >3 || PlayerMoving.Size >1.0001f || stop){
             Radius = Mathf.Lerp(Radius,3,Time.deltaTime*10);
             rotdir = Mathf.Lerp(rotdir,Mathf.Sign(rotdir) * 1f,Time.deltaTime*10);
             PlayerMoving.Size = Mathf.Lerp(PlayerMoving.Size,1f,Time.deltaTime*10);
@@ -110,9 +115,10 @@ public class Circle1MovingNew : MonoBehaviour
         }
         // 서클 속도 증가 스킬
         if (IsDoubleClicked && Player.CircleEnergy >= 50 || CircleEnergyCheck1){
+            
             if (Player.CircleEnergy > 0.3f){
-                Player.CircleEnergy -= Time.deltaTime*30;
-                rotdir = -10;
+                Player.CircleEnergy -= Time.deltaTime*CEDS;
+                rotdir = -CSSpeed;
                 CircleEnergyCheck1 = true;
             }
             else if (Player.CircleEnergy <= 0.3f){
@@ -141,9 +147,10 @@ public class Circle1MovingNew : MonoBehaviour
         }
         //서클 속도 증가 스킬
         if (IsDoubleClicked2 && Player.CircleEnergy >= 50 || CircleEnergyCheck2){
+           
             if (Player.CircleEnergy > 0.3f){
-                Player.CircleEnergy -= Time.deltaTime*30;
-                rotdir = 10;
+                Player.CircleEnergy -= Time.deltaTime*CEDS;
+                rotdir = CSSpeed;
                 CircleEnergyCheck2 = true;
             }
             else if (Player.CircleEnergy <= 0.3f){

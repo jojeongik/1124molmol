@@ -42,6 +42,11 @@ public class PlayerMoving : DamageController
     public static float Size = 1;// 서클 사이즈
     public static float AngleSpeed = 1; // 회전 속도
     public static float SkillDamage;
+    
+    public float HpUp; // 레벨업 시 Hp 증가
+    public float DmgUp; // 레벨업 시 공격력 증가
+    public float ASUp; // 레벨업 시 회전속도 증가
+    public float SizeUp; // 레벨업 시 서클 크기 증가
 
 
 
@@ -209,9 +214,10 @@ public class PlayerMoving : DamageController
         expSlider.value = CurrentExp;
         CircleSlider.maxValue = 50;
         if (CircleEnergy >50 ){
-            CircleSlider.value = 50;
+            CircleEnergy = 50;
+            CircleSlider.value = CircleEnergy;
         }
-        else {
+        else{
             CircleSlider.value = CircleEnergy;
         }
         EnergySlider.maxValue = 100f;
@@ -222,12 +228,12 @@ public class PlayerMoving : DamageController
         {
             CurrentExp = 0;
             PlayerLevel++;
-            PlayerHp += 20;
+            PlayerHp += HpUp;
             CurrentHp = PlayerHp;
             hp = PlayerHp;
-            PlayerAtkDmg += 2;
-            AngleSpeed += 1;
-            Size += 0.1f;
+            PlayerAtkDmg += DmgUp;
+            AngleSpeed += ASUp;
+            Size += SizeUp;
 
             GameObject hudText = Instantiate(LevelUpText); //Levelup 텍스트 생성
             hudText.transform.position = hudPos.position;
